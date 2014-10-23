@@ -72,7 +72,8 @@ information. See the NOBATCHREPLAYGAIN configuration variable.
 .TP
 .B \-c [filename]
 Specifies an additional configuration file to parse. Configuration options
-in this file override those in \fI/etc/abcde.conf\fR or \fI$HOME/.abcde.conf\fR.
+in this file override those in \fI/etc/abcde.conf\fR or
+\fI$XDG_CONFIG_HOME/abcde/abcde.conf\fR.
 .TP
 .B \-C [discid]
 Allows you to resume a session for
@@ -221,7 +222,8 @@ modified using the OUTPUTFORMAT and VAOUTPUTFORMAT variables in your
 format, 'vorbis' for '.ogg', '.mp3', '.flac', '.spx', '.mpc', '.aac', '.wav' or '.opus'.
 .SH CONFIGURATION
 \fBabcde\fR sources two configuration files on startup - \fI/etc/abcde.conf\fR and
-\fI$HOME/.abcde.conf\fR, in that order. 
+\fI$XDG_CONFIG_HOME/abcde/abcde.conf\fR, in that order.  If XDG_CONFIG_HOME is unset,
+\fI$HOME/.config/abcde/abcde.conf\fR will be used instead.
 .PP
 The configuration options stated in those files can be overridden by providing
 the appropriate flags at runtime.
