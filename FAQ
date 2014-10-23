@@ -47,11 +47,11 @@ A. Put these options in your abcde.conf:
 Q. Low on disk space?
 A. abcde has different algorithms to schedule ripping and encoding - to 
    optimize for disk conservation, use -l. You can also define
-   WAVOUTPUTDIR=/some/other/path to your /etc/abcde.conf or
-   ~/.config/abcde/abcde.conf to store the WAV files on another NFS shared
-   disk, for example.  Also, UNIX pipes have also been implemented, using "-P",
-   so abcde reads and encodes the tracks from the CD at once. However, it has
-   the drawback that only one format can be encoded at a time.
+   WAVOUTPUTDIR=/some/other/path in your system or user configuration file to
+   store the WAV files on another NFS shared disk, for example.  Also, UNIX
+   pipes have also been implemented, using "-P", so abcde reads and encodes
+   the tracks from the CD at once. However, it has the drawback that only one
+   format can be encoded at a time.
 
 Q. How can i make abcde encode faster? My CD reader is way faster than the pace
    it can encode my tracks.
@@ -81,15 +81,15 @@ A. That is not possible, since abcde gets the information from CDDB database.
 Q. (Thanks to Amaya) Where are those options and settings defined? Why dont
    you include a proper abcde.conf as an example?
 A. I do. It should be installed under /etc/abcde.conf and contains more or
-   less all the defaults abcde uses. You can use ~/.config/abcde/abcde.conf to
-   override those defaults. More information can be obtained from the man page
-   which can be consulted using "man abcde".
+   less all the defaults abcde uses. You can override those defaults there or
+   in the user configuration file. More information can be obtained from the
+   man page which can be consulted using "man abcde".
    
 Q. I keep on getting files with ".ogg.ogg" extension. What am I doing wrong?
 A. The code for multiple-output adds automatically the extension of the
    different outputs you select with the "-o" extension (or with OUTPUTTYPE
    variable). Erase the ".${OUTPUTTYPE}" part from the OUTPUTFORMAT variable
-   in /etc/abcde.conf or ~/.config/abcde/abcde.conf
+   in the system or user configuration files.
 
 Q. I have modified some of the options, and now CDDB has stopped working.
 A. Check that you have modified everything in the right way. For instance, if
