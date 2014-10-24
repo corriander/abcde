@@ -1,0 +1,127 @@
+From 95b5d66686f20c5cddbc775c3cd169a637e545bf Mon Sep 17 00:00:00 2001
+From: Alex Corrie <ajccode@gmail.com>
+Date: Thu, 23 Oct 2014 23:08:47 +0100
+Subject: [PATCH] Remove explicit reference to XDG_CONFIG_HOME path.
+
+Although if a user sets XDG_CONFIG_HOME it's likely they'll interpret
+the documentation correctly, it's perhaps better not to explicitly
+refer to the ~/.config directory; "hardcoding" the path in the
+documentation seems counter to the flexibility of the XDG Base
+Directory Specification. Here, the files are referred to as "system"
+and "user" configuration files with an extended explanation of where
+these are in the man page.
+---
+ FAQ        | 18 +++++++++---------
+ USEPIPES   |  2 +-
+ abcde.1    | 17 ++++++++++-------
+ abcde.conf |  4 +++-
+ 4 files changed, 23 insertions(+), 18 deletions(-)
+
+diff --git a/FAQ b/FAQ
+index 13c2cd1..c326bea 100644
+--- a/FAQ
++++ b/FAQ
+@@ -47,11 +47,11 @@ A. Put these options in your abcde.conf:
+ Q. Low on disk space?
+ A. abcde has different algorithms to schedule ripping and encoding - to 
+    optimize for disk conservation, use -l. You can also define
+-   WAVOUTPUTDIR=/some/other/path to your /etc/abcde.conf or
+-   ~/.config/abcde/abcde.conf to store the WAV files on another NFS shared
+-   disk, for example.  Also, UNIX pipes have also been implemented, using "-P",
+-   so abcde reads and encodes the tracks from the CD at once. However, it has
+-   the drawback that only one format can be encoded at a time.
++   WAVOUTPUTDIR=/some/other/path in your system or user configuration file to
++   store the WAV files on another NFS shared disk, for example.  Also, UNIX
++   pipes have also been implemented, using "-P", so abcde reads and encodes
++   the tracks from the CD at once. However, it has the drawback that only one
++   format can be encoded at a time.
+ 
+ Q. How can i make abcde encode faster? My CD reader is way faster than the pace
+    it can encode my tracks.
+@@ -81,15 +81,15 @@ A. That is not possible, since abcde gets the information from CDDB database.
+ Q. (Thanks to Amaya) Where are those options and settings defined? Why dont
+    you include a proper abcde.conf as an example?
+ A. I do. It should be installed under /etc/abcde.conf and contains more or
+-   less all the defaults abcde uses. You can use ~/.config/abcde/abcde.conf to
+-   override those defaults. More information can be obtained from the man page
+-   which can be consulted using "man abcde".
++   less all the defaults abcde uses. You can override those defaults there or
++   in the user configuration file. More information can be obtained from the
++   man page which can be consulted using "man abcde".
+    
+ Q. I keep on getting files with ".ogg.ogg" extension. What am I doing wrong?
+ A. The code for multiple-output adds automatically the extension of the
+    different outputs you select with the "-o" extension (or with OUTPUTTYPE
+    variable). Erase the ".${OUTPUTTYPE}" part from the OUTPUTFORMAT variable
+-   in /etc/abcde.conf or ~/.config/abcde/abcde.conf
++   in the system or user configuration files.
+ 
+ Q. I have modified some of the options, and now CDDB has stopped working.
+ A. Check that you have modified everything in the right way. For instance, if
+diff --git a/USEPIPES b/USEPIPES
+index 16e67ee..55ad72f 100644
+--- a/USEPIPES
++++ b/USEPIPES
+@@ -39,7 +39,7 @@ supports "ripping" from a FLAC file :) uses "-c ".
+ 
+ To add support for a ripper called "cdripper" which uses the "-" special flag
+ for outputting to the standard output, you need to open the config file (either
+-/etc/abcde.conf or ~/.config/abcde/abcde.conf) and add the line:
++/etc/abcde.conf or $XDG_CONFIG_HOME/abcde/abcde.conf) and add the line:
+ 
+ PIPERIPPER_cdripper="-"
+ 
+diff --git a/abcde.1 b/abcde.1
+index 35e87e1..b003cd1 100644
+--- a/abcde.1
++++ b/abcde.1
+@@ -72,8 +72,7 @@ information. See the NOBATCHREPLAYGAIN configuration variable.
+ .TP
+ .B \-c [filename]
+ Specifies an additional configuration file to parse. Configuration options
+-in this file override those in \fI/etc/abcde.conf\fR or
+-\fI$XDG_CONFIG_HOME/abcde/abcde.conf\fR.
++in this file override those in the system or user configuration files.
+ .TP
+ .B \-C [discid]
+ Allows you to resume a session for
+@@ -221,12 +220,16 @@ modified using the OUTPUTFORMAT and VAOUTPUTFORMAT variables in your
+ \fIabcde.conf\fR. Each file is given an extension identifying  its compression 
+ format, 'vorbis' for '.ogg', '.mp3', '.flac', '.spx', '.mpc', '.aac', '.wav' or '.opus'.
+ .SH CONFIGURATION
+-\fBabcde\fR sources two configuration files on startup - \fI/etc/abcde.conf\fR and
+-\fI$XDG_CONFIG_HOME/abcde/abcde.conf\fR, in that order.  If XDG_CONFIG_HOME is unset,
+-\fI$HOME/.config/abcde/abcde.conf\fR will be used instead.
+ .PP
+-The configuration options stated in those files can be overridden by providing
+-the appropriate flags at runtime.
++By default, \fBabcde\fR sources two configuration files on startup
++in the following order:
++.IP /etc/abcde.conf
++System-wide configuration file.
++.IP $XDG_CONFIG_HOME/abcde/abcde.conf
++User-specific configuration file. If $XDG_CONFIG_HOME is unset
++or empty, $HOME/.config/abcde/abcde.conf will be used instead.
++.PP
++Options can be overriden by providing the appropriate flags at runtime.
+ .PP
+ The configuration variables have to be set as follows:
+ .TP
+diff --git a/abcde.conf b/abcde.conf
+index 474f702..2d81209 100644
+--- a/abcde.conf
++++ b/abcde.conf
+@@ -2,7 +2,9 @@
+ # Nothing in this file is uncommented by default.
+ # 
+ # If you wish to override these system-wide settings, create your own
+-# abcde.conf file in $HOME/.config/abcde.
++# configuration file at $XDG_CONFIG_HOME/abcde/abcde.conf (if
++# $XDG_CONFIG_HOME is empty or unset, the default path is
++# ~/.config/abcde/abcde.conf).
+ 
+ # CDDB options
+ # Choose whether you want to use CDDB or Musicbrainz. Default is CDDB
+-- 
+1.9.1
+

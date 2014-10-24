@@ -1,0 +1,72 @@
+From 189df7c504db95fc5be9177ca84e72d0f558817e Mon Sep 17 00:00:00 2001
+From: Alex Corrie <ajccode@gmail.com>
+Date: Fri, 24 Oct 2014 14:39:13 +0100
+Subject: [PATCH] Respect XDG_CACHE_HOME
+
+  - If on OSX, keep existing behaviour of outputting to current
+    directory. I'd be guessing if I tried to implement proper
+    directories (see http://stackoverflow.com/q/3373948).
+  - If the KEEPWAVS option is enabled, output WAVs to the OUTPUTDIR
+    default (current directory).
+  - Otherwise, the default (for an unset/empty XDG_CACHE_HOME) is:
+
+        ~/.cache/abcde.blah-blah-discid
+
+Hi, Captain Perfectionist here:
+
+  - Ideally, abcde's cache should probably go in an "abcde"
+    subdirectory of $XDG_CACHE_HOME. However, this just shifts the
+    ABCDETEMPDIR ("abcde.$DISCID") directly rather than into a
+    dedicated subdirectory. I'd probably suggest dropping the "abcde."
+    prefix of the temp dir and putting it in a proper subdir in this
+    type of situation, e.g.
+
+        ~/.cache/abcde/blah-blah-discid
+
+    On the other hand, I suspect the case where temp dirs somehow
+    accumulate and cause a mess of the cache dir AND the user actually
+    cares about this is probably not a likely one ...hence the minimal
+    change.
+---
+ abcde      | 8 +++++++-
+ abcde.conf | 5 +++--
+ 2 files changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/abcde b/abcde
+index 051ad66..bfc6334 100755
+--- a/abcde
++++ b/abcde
+@@ -3409,7 +3409,13 @@ if [ -z "$OUTPUTDIR" ]; then
+ fi
+ 
+ if [ -z "$WAVOUTPUTDIR" ]; then
+-	WAVOUTPUTDIR="$OUTPUTDIR"
++	# By default, intermediate WAVs belong in cache unless they're being kept.
++	# Additionally, OSX has its own dir. structure; keep existing behaviour.
++	if [ "$KEEPWAVS" = "y" ] || [ "$OSFLAVOUR" = "OSX" ]; then
++		WAVOUTPUTDIR="$OUTPUTDIR"
++	else
++		WAVOUTPUTDIR="${XDG_CACHE_HOME:-$HOME/.cache}"
++	fi
+ fi
+ 
+ # Load system defaults
+diff --git a/abcde.conf b/abcde.conf
+index 63ee328..0547c4c 100644
+--- a/abcde.conf
++++ b/abcde.conf
+@@ -255,8 +255,9 @@
+ #OUTPUTDIR=`pwd`
+ 
+ # Or if you'd just like to put the temporary .wav files somewhere else
+-# you can specify that here
+-#WAVOUTPUTDIR=`pwd`
++# you can specify that here. On OSX, or if KEEPWAVS is "y", this
++# defaults to the same as OUTPUTDIR (current directory).
++#WAVOUTPUTDIR=${XDG_CACHE_HOME:-$HOME/.config}
+ 
+ # OUTPUTTYPE can be any of a number of formats, either a single format
+ # (e.g. "ogg") or a combination of them separated with ","
+-- 
+1.9.1
+
