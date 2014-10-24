@@ -3409,7 +3409,13 @@ if [ -z "$OUTPUTDIR" ]; then
 fi
 
 if [ -z "$WAVOUTPUTDIR" ]; then
-	WAVOUTPUTDIR="$OUTPUTDIR"
+	# By default, intermediate WAVs belong in cache unless they're being kept.
+	# Additionally, OSX has its own dir. structure; keep existing behaviour.
+	if [ "$KEEPWAVS" = "y" ] || [ "$OSFLAVOUR" = "OSX" ]; then
+		WAVOUTPUTDIR="$OUTPUTDIR"
+	else
+		WAVOUTPUTDIR="${XDG_CACHE_HOME:-$HOME/.cache}"
+	fi
 fi
 
 # Load system defaults
