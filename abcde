@@ -3417,7 +3417,9 @@ if [ -r /etc/abcde.conf ]; then
 	. /etc/abcde.conf
 fi
 # Load user preference defaults
-if [ -r $HOME/.abcde.conf ]; then
+if [ -r ${XDG_CONFIG_HOME:-$HOME/.config}/abcde/abcde.conf ]; then
+	. ${XDG_CONFIG_HOME:-$HOME/.config}/abcde/abcde.conf
+elif [ -r $HOME/.abcde.conf ]; then
 	. $HOME/.abcde.conf
 fi
 

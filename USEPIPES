@@ -39,7 +39,7 @@ supports "ripping" from a FLAC file :) uses "-c ".
 
 To add support for a ripper called "cdripper" which uses the "-" special flag
 for outputting to the standard output, you need to open the config file (either
-/etc/abcde.conf or ~/.abcde.conf) and add the line:
+/etc/abcde.conf or $XDG_CONFIG_HOME/abcde/abcde.conf) and add the line:
 
 PIPERIPPER_cdripper="-"
 
